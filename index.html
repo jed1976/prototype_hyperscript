@@ -1,0 +1,246 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hyperscript</title>
+    <script type="module">
+      import { hyperscript } from './hyperscript/hyperscript.js'
+
+      const data = {
+        projects: [
+          {
+            name: 'Project A <script>alert("123")<\/script>',
+            url: '/123'
+          },
+          {
+            name: 'Project B',
+            url: '/456'
+          },
+          {
+            name: 'Project C',
+            url: '/789'
+          },
+          {
+            name: 'Project D',
+            url: '/123'
+          },
+          {
+            name: 'Project E',
+            url: '/456'
+          },
+          {
+            name: 'Project F',
+            url: '/789'
+          }
+        ],
+        title: 'Hyperspaces',
+        version: 1.0,
+        class: 'accordion',
+        active: true,
+        authenticated: false
+      }
+
+      const template = [
+        "<!doctype html>",
+        {
+          "element": "html",
+          "attribute": {
+            "lang": "en"
+          },
+          "content": [
+            {
+              "element": "head",
+              "content": [
+                {
+                  "element": "meta",
+                  "attribute": {
+                    "charset": "utf-8"
+                  }
+                },
+                {
+                  "element": "title",
+                  "content": [ "hyperscript" ]
+                }
+              ]
+            },
+            {
+              "element": "body",
+              "content": [
+                {
+                  "element": {
+                    "if": [ { "var": "active" }, "h1", "h2" ]
+                  },
+                  "content": [
+                    {
+                      "element": "em",
+                      "content": [
+                        { "if": [ { "==": ["a", "b"] }, "bye, ", "hey, " ] }
+                      ]
+                    },
+                    " 🌏."
+                  ]
+                },
+
+                {
+                  "element": "hr"
+                },
+
+                {
+                  "element": "details",
+                  "attribute": {
+                    "class": {
+                      "if": [ { "var": "active" }, "hs-${class}", "hs-button" ]
+                    },
+                    "open": {
+                      "if": [ { "var": "active" }, true, false ]
+                    }
+                  },
+                  "content": [
+                    {
+                      "element": "summary",
+                      "content": [
+                        {
+                          "element": "strong",
+                          "content": [
+                            "Styles"
+                          ]
+                        }
+                      ]
+                    },
+                    "Style content"
+                  ]
+                },
+
+                {
+                  "element": "hr"
+                },
+
+                {
+                  "element": "img",
+                  "attribute": {
+                    "alt": "Logo",
+                    "src": "./hyperscript/favicon-32x32.png",
+                    "title": "${title}"
+                  }
+                },
+
+                {
+                  "element": "hr"
+                },
+
+                {
+                  "element": "h1"
+                },
+
+                {
+                  "element": "hr"
+                },
+
+                {
+                  "element": "input",
+                  "attribute": {
+                    "name": "background-color",
+                    "type": "color"
+                  }
+                },
+
+                {
+                  "if": [
+                    { "var": "projects" },
+                    {
+                      "element": "ul",
+                      "collection": {
+                        "keypath": "projects",
+                        "template": {
+                          "element": "li",
+                          "content": [
+                            {
+                              "element": "a",
+                              "attribute": {
+                                "href": "${url}"
+                              },
+                              "content": ["${name}"]
+                            }
+                          ]
+                        }
+                      }
+                    },
+
+                    {
+                      "element": "p",
+                      "content": [
+                        "No projects available"
+                      ]
+                    }
+                  ]
+                },
+
+                {
+                  "element": "hr"
+                },
+
+                {
+                  "if": [
+                    { "==": [1, 2] },
+                    {
+                      "element": "h1",
+                      "content": ["Condition is equal"]
+                    },
+
+                    {
+                      "element": "h2",
+                      "attribute": {
+                        "class": "red"
+                      },
+                      "content": ["Condition is not equal"]
+                    }
+                  ]
+                },
+
+                {
+                  "element": "hr"
+                },
+
+                {
+                  "if": [
+                    { "var": "authenticated" },
+                    {
+                      "element": "p",
+                      "content": ["Welcome!"]
+                    },
+
+                    {
+                      "element": "p",
+                      "content": ["Log in"]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+
+      // Performance Test:
+      //
+      // for (let i = 0; i < 100000; i++) {
+      //   data.projects.push({
+      //     name: 'Project ' + i,
+      //     url: '/' + i
+      //   })
+      // }
+
+      console.time()
+      // const html = hyperscript(template, data, { minify: false })
+      const html = hyperscript(template[1].content[1].content, data, { minify: false })
+      console.timeEnd()
+
+      console.log(html)
+
+      const fragment = document.createRange().createContextualFragment(html)
+      document.body.append(fragment)
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
